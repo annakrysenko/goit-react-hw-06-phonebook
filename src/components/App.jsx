@@ -5,34 +5,22 @@ import Wrapper from './Wrapper/Wrapper';
 import { nanoid } from 'nanoid';
 import styles from './App.module.css';
 import ContactsWrapper from './ContactsWrapper/ContactsWrapper';
-import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { addContactsAction } from 'redux/contacts/contactsSlice';
+import { getContacts } from 'redux/contacts/contactsSelector';
 
 export const App = () => {
-  const [contacts, setContacts] = useState(
-    () => JSON.parse(localStorage.getItem('contacts')) ?? []
-  );
-
-  const [filter, setFilter] = useState('');
-
-  useEffect(() => {
-    window.localStorage.setItem('contacts', JSON.stringify(contacts));
-  }, [contacts]);
+  const dispatch = useDispatch();
+  const contacts = useSelector(getContacts);
 
   const handleSubmit = ({ number, name }) => {
-    setContacts(prevState => [...prevState, { id: nanoid(), name, number }]);
+    const contact = {
+      name,
+      number,
+      id: nanoid(),
+    };
+    dispatch(addContactsAction(contact));
   };
-
-  const handleFilter = ev => {
-    const { value } = ev.target;
-    setFilter(value);
-  };
-
-  const showFilteredContacts = contacts.filter(({ name }) =>
-    name.toLowerCase().includes(filter.toLowerCase())
-  );
-
-  const OnClickDelete = id =>
-    setContacts(prevState => prevState.filter(contact => contact.id !== id));
 
   return (
     <div className={styles.container}>
@@ -44,12 +32,8 @@ export const App = () => {
         />
 
         <ContactsWrapper>
-          <Filter handleFilter={handleFilter} filter={filter} />
-          <ContactsList
-            title="Contacts"
-            showFilteredContacts={showFilteredContacts}
-            OnClickDelete={OnClickDelete}
-          />
+          <Filter />
+          <ContactsList title="Contacts" />
         </ContactsWrapper>
       </Wrapper>
     </div>

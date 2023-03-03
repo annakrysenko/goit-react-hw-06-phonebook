@@ -1,13 +1,25 @@
 import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
+import { getContacts } from 'redux/contacts/contactsSelector';
+import { deleteContactsAction } from 'redux/contacts/contactsSlice';
 import styles from './ContactsList.module.css';
 
-const ContactsList = ({ showFilteredContacts, OnClickDelete, title }) => {
+const ContactsList = ({ title }) => {
+  const dispatch = useDispatch();
+  const contacts = useSelector(getContacts);
+  // const filtered = useSelector(getFiltered);
+
+  // let contactsArr;
+  // filtered && filtered.length > 0
+  //   ? (contactsArr = filtered)
+  //   : (contactsArr = contacts);
+
   return (
     <>
       <h2 className={styles.title}>{title}</h2>
       <ul className={styles.list}>
-        {showFilteredContacts.length ? (
-          showFilteredContacts.map(contact => (
+        {contacts && contacts.length > 0 ? (
+          contacts.map(contact => (
             <li key={contact.id} className={styles.item}>
               <p>
                 <span>{contact.name}:</span>
@@ -15,7 +27,7 @@ const ContactsList = ({ showFilteredContacts, OnClickDelete, title }) => {
               </p>
               <button
                 type="button"
-                onClick={() => OnClickDelete(contact.id)}
+                onClick={() => dispatch(deleteContactsAction(contact.id))}
                 className={styles.delete}
               >
                 Delete
@@ -31,14 +43,6 @@ const ContactsList = ({ showFilteredContacts, OnClickDelete, title }) => {
 };
 
 ContactsList.propTypes = {
-  showFilteredContacts: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string,
-      name: PropTypes.string,
-      number: PropTypes.string,
-    })
-  ),
-  OnClickDelete: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
 };
 

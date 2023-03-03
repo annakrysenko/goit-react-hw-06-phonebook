@@ -2,8 +2,12 @@ import { Notify } from 'notiflix';
 import styles from './ContactsForm.module.css';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { getContacts } from 'redux/contacts/contactsSelector';
 
-const ContactsForm = ({ title, handleSubmit, contacts }) => {
+const ContactsForm = ({ title, handleSubmit }) => {
+  const contacts = useSelector(getContacts);
+
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
@@ -78,13 +82,13 @@ const ContactsForm = ({ title, handleSubmit, contacts }) => {
 ContactsForm.propTypes = {
   title: PropTypes.string.isRequired,
   handleSubmit: PropTypes.func.isRequired,
-  contacts: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string,
-      name: PropTypes.string,
-      number: PropTypes.string,
-    })
-  ),
+  // contacts: PropTypes.arrayOf(
+  //   PropTypes.shape({
+  //     id: PropTypes.string,
+  //     name: PropTypes.string,
+  //     number: PropTypes.string,
+  //   })
+  // ),
 };
 
 export default ContactsForm;
